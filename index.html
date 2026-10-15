@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Plant Doctor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #071b12, #103c27, #06140e);
+      color: white;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 28px 15px;
+      border-bottom: 1px solid #286b46;
+    }
+    header h1 { color: #65ff9a; margin-bottom: 8px; }
+    header p { color: #c3e7ce; }
+    .container {
+      max-width: 650px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    .panel {
+      background: #10291e;
+      border: 1px solid #286b46;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 0 25px #00ff6615;
+    }
+    label, select, button { display: block; width: 100%; }
+    select, input[type="file"], button {
+      margin-top: 12px;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    select, input[type="file"] {
+      background: #071b12;
+      color: white;
+      border: 1px solid #397a52;
+    }
+    button {
+      background: #45ed83;
+      color: #082014;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #82ffad; }
+    #preview {
+      display: none;
+      width: 100%;
+      max-height: 330px;
+      object-fit: contain;
+      margin-top: 20px;
+      border-radius: 12px;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #071b12;
+      border-radius: 10px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+    .note { color: #c3e7ce; font-size: 13px; }
+    footer { text-align: center; padding: 25px; color: #9dc6aa; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌿 AI Plant Doctor</h1>
+    <p>Detect plant diseases with artificial intelligence</p>
+    <select id="language" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="ku">کوردی - کوردی</option>
+    </select>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2 id="heading">Check Your Plant</h2>
+      <p id="description">Upload a clear photo of a plant leaf to get started.</p>
+
+      <label id="uploadLabel" for="photo">Choose a leaf photo:</label>
+      <input id="photo" type="file" accept="image/*">
+
+      <img id="preview" alt="Selected plant leaf">
+
+      <button id="checkButton" onclick="checkPlant()">Analyze Plant</button>
+
+      <div id="result" aria-live="polite">
+        Your result will appear here.
+      </div>
+
+      <p class="note" id="note">
+        Note: This demo website does not yet run the AI model.
+        A model API must be connected for real disease predictions.
+        Do not use this demo result to make plant treatment decisions.
+      </p>
+    </section>
+  </main>
+
+  <footer>🌱 AI Plant Doctor · Plant health matters</footer>
+
+  <script>
+    const photo = document.getElementById("photo");
+    const preview = document.getElementById("preview");
+    const result = document.getElementById("result");
+
+    photo.addEventListener("change", function () {
+      const file = photo.files[0];
+      if (!file) {
+        preview.style.display = "none";
+        return;
+      }
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file.");
+        photo.value = "";
+        return;
+      }
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+      result.textContent = "Photo selected. Ready to connect to the AI model.";
+    });
+
+    function changeLanguage() {
+      const ku = document.getElementById("language").value === "ku";
+      document.documentElement.lang = ku ? "ku" : "en";
+      document.documentElement.dir = ku ? "rtl" : "ltr";
+
+      document.getElementById("heading").textContent =
+        ku ? "نەخۆشی ڕووەکەکەت بپشکنە" : "Check Your Plant";
+      document.getElementById("description").textContent =
+        ku ? "وێنەیەکی ڕوونی گەڵای ڕووەکەکەت باربکە." :
+        "Upload a clear photo of a plant leaf to get started.";
+      document.getElementById("uploadLabel").textContent =
+        ku ? "وێنەی گەڵا هەڵبژێرە:" : "Choose a leaf photo:";
+      document.getElementById("checkButton").textContent =
+        ku ? "پشکنینی ڕووەک" : "Analyze Plant";
+      result.textContent = ku
+        ? "ئەنجام لێرە دەردەکەوێت."
+        : "Your result will appear here.";
+      document.getElementById("note").textContent = ku
+        ? "تێبینی: هێشتا مۆدێلی AI پەیوەست نەکراوە؛ بۆ پێشبینی ڕاستەقینە پێویستە API پەیوەست بکرێت."
+        : "Note: This demo does not yet run the AI model. An API must be connected for real predictions.";
+    }
+
+    function checkPlant() {
+      const ku = document.getElementById("language").value === "ku";
+      if (!photo.files.length) {
+        result.textContent = ku
+          ? "تکایە سەرەتا وێنەی گەڵا هەڵبژێرە."
+          : "Please select a leaf photo first.";
+        return;
+      }
+      result.textContent = ku
+        ? "وێنەکە بارکرا، بەڵام بۆ ناسینەوەی نەخۆشی پێویستە مۆدێلی AI پەیوەست بکەین."
+        : "Photo uploaded, but the AI model must be connected before real disease detection can work.";
+    }
+  </script>
+</body>
+</html>
